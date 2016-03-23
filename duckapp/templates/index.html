@@ -1,11 +1,32 @@
 {% extends 'base.html' %}
-
-{% load bootstrap3 %}
-{% bootstrap_css %}
-{% bootstrap_javascript jquery=1 %}
-
 {% block content %}
 <div class="container">
-    <h3>Hello World!</h3>
+    {% for question in object_list %}
+
+        <div class="panel panel-default">
+            <div class="panel-heading"><b>{{ question.title }}</b></div>
+
+            <p>{{ question.question_text}}</p>
+        </div>
+
+            Tags:
+
+            {% for tag in question.tags.all %}
+                <b>{{ tag }}</b>
+                <br>
+
+                {% endfor %}
+
+    <!--answer block-->
+        {% for answer in question.answer_set.all %}
+
+                <b>{{ answer.title }}</b>
+            {{ answer.answer_text }}
+        {% empty %}
+            Be The First To Answer This Question!
+        {% endfor %}
+        <br><br>
+
+    {% endfor %}
 </div>
 {% endblock %}
