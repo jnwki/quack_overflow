@@ -5,7 +5,11 @@
     {% for question in object_list %}
 
         <div class="panel panel-default">
-            <div class="panel-heading"><b>{{ question.title }} -- asked by {{ question.asker }}</b></div>
+            <div class="panel-heading">
+                <b>
+                    {{ question.title }} -- asked by <a href="{% url 'user_detail' question.asker.userprofile.pk %}">{{ question.asker }}</a>
+                </b>
+            </div>
 
             <p>{{ question.question_text}}</p>
 

@@ -1,5 +1,5 @@
 # from django.shortcuts import render
-from django.views.generic import CreateView, ListView, View
+from django.views.generic import CreateView, ListView, View, DetailView
 from django.contrib.auth.models import User
 from duckapp.models import UserProfile, Question, Answer
 from django.core.urlresolvers import reverse
@@ -118,3 +118,7 @@ class DownvoteView(View):
 
         else:
             return HttpResponseRedirect(reverse('login'))
+
+
+class UserDetailView(DetailView):
+    model = UserProfile

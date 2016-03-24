@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% load bootstrap3 %}
+
+{% block content %}
+<div class="container">
+<h1>{{ object.user }}</h1>
+    <ul>
+        <li>Username: {{ object.user }}</li>
+        <li>User Score: {{ object.score }}</li>
+        <li>User Sign Up Date: {{ object.sign_up_date }}</li>
+    </ul>
+    <h3>Upvotes</h3>
+    <ul>
+        {% for upvote in object.upvotes.all %}
+            <li>{{ upvote }}</li>
+        {% endfor %}
+    </ul>
+
+    <h3>Downvotes</h3>
+    <ul>
+        {% for downvote in object.downvotes.all %}
+            <li>{{ downvote }}</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

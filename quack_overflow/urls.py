@@ -1,6 +1,7 @@
 from django.conf.urls import url
 from django.contrib import admin
-from duckapp.views import IndexView, UserCreateView, QuestionCreateView, AnswerCreateView, UpvoteView, DownvoteView
+from duckapp.views import IndexView, UserCreateView, QuestionCreateView, AnswerCreateView, UpvoteView, \
+    DownvoteView, UserDetailView
 from django.contrib.auth import views as auth_views
 
 
@@ -13,6 +14,7 @@ urlpatterns = [
     url(r'^question/createquestion/', QuestionCreateView.as_view(), name='question_create'),
     url(r'^question/(?P<pk>\d+)/createanswer/', AnswerCreateView.as_view(), name='answer_create'),
     url(r'^upvote/(?P<pk>\d+)', UpvoteView.as_view(), name='upvote'),
-    url(r'^downvote/(?P<pk>\d+)', DownvoteView.as_view(), name='downvote')
+    url(r'^downvote/(?P<pk>\d+)', DownvoteView.as_view(), name='downvote'),
+    url(r'^userdetail/(?P<pk>\d+)', UserDetailView.as_view(), name='user_detail')
 
 ]
