@@ -13,7 +13,7 @@ class AnswerSerializer(serializers.ModelSerializer):
         model = Answer
 
 
-class TagSerializer(serializers.Modelserializer):
+class TagSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tag
 

@@ -5,7 +5,7 @@ from django.core.urlresolvers import reverse
 from django.contrib.auth.forms import UserCreationForm
 from django.http import HttpResponseRedirect
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
-from serializers import QuestionSerializer, UserSerializer
+from duckapp.serializers import QuestionSerializer, UserSerializer
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from duckapp.permissions import IsOwnerOrReadOnly
 
