@@ -32,7 +32,7 @@ class Answer(models.Model):
     answerer = models.ForeignKey('auth.User')
     question = models.ForeignKey(Question)
     answer_text = models.TextField()
-    score = models.IntegerField()
+    score = models.IntegerField(default=0)
     title = models.CharField(max_length=255)
     timestamp = models.DateTimeField(auto_now_add=True)
 

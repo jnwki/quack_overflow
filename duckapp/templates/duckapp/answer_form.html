@@ -1,10 +1,9 @@
 {% extends 'base.html' %}
 {% load bootstrap3 %}
-
 {% block content %}
 <div class="container">
 
-    <form class="" action="{% url 'index' %}" method="post">
+    <form class="" action="" method="post">
         {% csrf_token %}
         {% bootstrap_form form %}
         {% buttons %}

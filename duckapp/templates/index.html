@@ -1,32 +1,39 @@
 {% extends 'base.html' %}
 {% block content %}
 <div class="container">
+
     {% for question in object_list %}
 
         <div class="panel panel-default">
             <div class="panel-heading"><b>{{ question.title }}</b></div>
 
             <p>{{ question.question_text}}</p>
-        </div>
 
             Tags:
-
             {% for tag in question.tags.all %}
                 <b>{{ tag }}</b>
-                <br>
-
-                {% endfor %}
-
+            {% endfor %}
+            <br>
+        {% if not question.answer_set.all %}
+            <a href="{% url 'answer_create' question.pk %}">Be The First To Answer This Question</a>
+        {% else %}
+            <a href="{% url 'answer_create' question.pk %}">Answer This Question</a>
+        {% endif %}
+        <br>
     <!--answer block-->
+        <h3>Answers</h3>
+        <ul>
         {% for answer in question.answer_set.all %}
+            <br>
+                <li><b>{{ answer.title }}</b></li>
 
-                <b>{{ answer.title }}</b>
-            {{ answer.answer_text }}
-        {% empty %}
-            Be The First To Answer This Question!
+            <li>{{ answer.answer_text }}</li>
+            Answer Rating: {{ answer.score }}
+            <a href="{% url 'upvote' answer.pk %}">Upvote</a>
         {% endfor %}
+        </ul>
         <br><br>
-
+        </div>
     {% endfor %}
 </div>
 {% endblock %}

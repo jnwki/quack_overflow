@@ -5,7 +5,7 @@
     <head>
         {% bootstrap_css %}
         <meta charset="utf-8">
-        <title></title>
+        <title>Quack Overflow</title>
     </head>
     <body>
         <div class="container">
@@ -26,7 +26,11 @@
                     <!-- Collect the nav links, forms, and other content for toggling -->
                     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                         <ul class="nav navbar-nav">
+                            {% if user.is_authenticated %}
+                            <li><a href="{% url 'signup' %}">Welcome {{ request.user }}<span class="sr-only">(current)</span></a></li>
+                            {% else %}
                             <li><a href="{% url 'signup' %}">Signup<span class="sr-only">(current)</span></a></li>
+                            {% endif %}
                         </ul>
                         <form class="navbar-form navbar-left" role="search">
                             <div class="form-group">
