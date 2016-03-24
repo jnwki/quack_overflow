@@ -1,10 +1,13 @@
-# from django.shortcuts import render
 from django.views.generic import CreateView, ListView, View, DetailView
 from django.contrib.auth.models import User
 from duckapp.models import UserProfile, Question, Answer
 from django.core.urlresolvers import reverse
 from django.contrib.auth.forms import UserCreationForm
 from django.http import HttpResponseRedirect
+from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
+from serializers import QuestionSerializer, UserSerializer
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
+from duckapp.permissions import IsOwnerOrReadOnly
 
 
 class IndexView(ListView):
@@ -113,7 +116,6 @@ class DownvoteView(View):
 
             answer.score -= 1
             answer.save()
-
             return HttpResponseRedirect(reverse('index'))
 
         else:
@@ -122,3 +124,28 @@ class DownvoteView(View):
 
 class UserDetailView(DetailView):
     model = UserProfile
+
+
+class QuestionListCreateAPIView(ListCreateAPIView):
+        serializer_class = QuestionSerializer
+        queryset = Question.objects.all()
+        permission_classes = (IsAuthenticatedOrReadOnly,)
+
+
+class QuestionRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
+    serializer_class = QuestionSerializer
+    permission_classes = (IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly,)
+    queryset = Question.objects.all()
+
+
+# should probably be just a createview. needs to attach a userprofile
+class UserListCreateAPIView(ListCreateAPIView):
+    serializer_class = UserSerializer
+    queryset = User.objects.all()
+
+
+# don't think I need this view as userprofile (not user) would be what others would want to see
+class UserRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
+    serializer_class = UserSerializer
+    permission_classes = (IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly,)
+    queryset = User.objects.all()
