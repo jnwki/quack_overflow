@@ -60,10 +60,13 @@ class UpvoteView(View):
         if self.request.user:
             answer = Answer.objects.get(pk=self.kwargs['pk'])
             answer.score += 1
+            answer.save()
+
             answerer_var = UserProfile.objects.get(user=answer.answerer)
             answerer_var.score += 10
+            answerer_var.upvotes.add(answer)
             answerer_var.save()
-            answer.save()
+            
             return HttpResponseRedirect(reverse('index'))
         else:
             return HttpResponseRedirect(reverse('login'))

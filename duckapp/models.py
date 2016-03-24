@@ -38,4 +38,5 @@ class UserProfile(models.Model):
     user = models.OneToOneField('auth.User')
     score = models.IntegerField(default=0)
     sign_up_date = models.DateTimeField(auto_now_add=True)
-    upvotes = models.ManyToManyField(Answer)
+    upvotes = models.ManyToManyField(Answer, related_name='upvote')
+    downvotes = models.ManyToManyField(Answer, related_name='downvote')
