@@ -5,7 +5,7 @@
     {% for question in object_list %}
 
         <div class="panel panel-default">
-            <div class="panel-heading"><b>{{ question.title }}</b></div>
+            <div class="panel-heading"><b>{{ question.title }} -- asked by {{ question.asker }}</b></div>
 
             <p>{{ question.question_text}}</p>
 
@@ -25,11 +25,12 @@
         <ul>
         {% for answer in question.answer_set.all %}
             <br>
-                <li><b>{{ answer.title }}</b></li>
+                <li><b>{{ answer.title }}</b> -- Answered by {{ answer.answerer }}</li>
 
             <li>{{ answer.answer_text }}</li>
             Answer Rating: {{ answer.score }}
             <a href="{% url 'upvote' answer.pk %}">Upvote</a>
+            <a href="{% url 'downvote' answer.pk %}">Downvote</a>
         {% endfor %}
         </ul>
         <br><br>

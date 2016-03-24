@@ -59,18 +59,62 @@ class UpvoteView(View):
     def get(self, request, *args, **kwargs):
         if self.request.user:
             answer = Answer.objects.get(pk=self.kwargs['pk'])
+            upvoter = UserProfile.objects.get(user=self.request.user)
+
+            if answer in upvoter.upvotes.all():
+                print("user has already upvoted that answer")
+                return HttpResponseRedirect(reverse('index'))
+            elif answer in upvoter.downvotes.all():
+                print("user has already downvoted that answer")
+                return HttpResponseRedirect(reverse('index'))
+            elif answer.answerer == self.request.user:
+                print("You cannot vote on your own posts")
+                return HttpResponseRedirect(reverse('index'))
+
+            upvoter.upvotes.add(answer)
+            upvoter.save()
+
+            question_answerer = UserProfile.objects.get(user=answer.answerer)
+            question_answerer.score += 10
+            question_answerer.save()
+
             answer.score += 1
             answer.save()
 
-            answerer_var = UserProfile.objects.get(user=answer.answerer)
-            answerer_var.score += 10
-            answerer_var.upvotes.add(answer)
-            answerer_var.save()
-            
             return HttpResponseRedirect(reverse('index'))
+
         else:
             return HttpResponseRedirect(reverse('login'))
 
 
 class DownvoteView(View):
-    pass
+    def get(self, request, *args, **kwargs):
+        if self.request.user:
+            answer = Answer.objects.get(pk=self.kwargs['pk'])
+            downvoter = UserProfile.objects.get(user=self.request.user)
+
+            if answer in downvoter.downvotes.all():
+                print("user has already downvoted that answer")
+                return HttpResponseRedirect(reverse('index'))
+            elif answer in downvoter.upvotes.all():
+                print("user has already upvoted that answer")
+                return HttpResponseRedirect(reverse('index'))
+            elif answer.answerer == self.request.user:
+                print("You cannot vote on your own posts")
+                return HttpResponseRedirect(reverse('index'))
+
+            downvoter.downvotes.add(answer)
+            downvoter.score -= 1
+            downvoter.save()
+
+            question_answerer = UserProfile.objects.get(user=answer.answerer)
+            question_answerer.score -= 5
+            question_answerer.save()
+
+            answer.score -= 1
+            answer.save()
+
+            return HttpResponseRedirect(reverse('index'))
+
+        else:
+            return HttpResponseRedirect(reverse('login'))
