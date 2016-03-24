@@ -1,12 +1,6 @@
 from django.db import models
 
 
-class UserProfile(models.Model):
-    user = models.OneToOneField('auth.User')
-    score = models.IntegerField(default=0)
-    sign_up_date = models.DateTimeField(auto_now_add=True)
-
-
 class Tag(models.Model):
     name = models.CharField(max_length=50)
 
@@ -38,3 +32,10 @@ class Answer(models.Model):
 
     def __str__(self):
         return "{}".format(self.title)
+
+
+class UserProfile(models.Model):
+    user = models.OneToOneField('auth.User')
+    score = models.IntegerField(default=0)
+    sign_up_date = models.DateTimeField(auto_now_add=True)
+    upvotes = models.ManyToManyField(Answer)
