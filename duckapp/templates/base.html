@@ -30,6 +30,7 @@
                             <li><a href="{% url 'signup' %}">Welcome {{ request.user }}<span class="sr-only">(current)</span></a></li>
                             {% else %}
                             <li><a href="{% url 'signup' %}">Signup<span class="sr-only">(current)</span></a></li>
+                            <li><a href="{% url 'login' %}">Login<span class="sr-only">(current)</span></a></li>
                             {% endif %}
                         </ul>
                         <form class="navbar-form navbar-left" role="search">
