@@ -2,8 +2,9 @@ from django.conf.urls import url
 from django.contrib import admin
 from duckapp.views import IndexView, UserCreateView, QuestionCreateView, AnswerCreateView, UpvoteView, \
     DownvoteView, UserDetailView, QuestionListCreateAPIView, QuestionRetrieveUpdateDestroyAPIView, \
-    UserListCreateAPIView
+    UserCreateAPIView
 from django.contrib.auth import views as auth_views
+from rest_framework.authtoken import views
 
 
 urlpatterns = [
@@ -19,5 +20,6 @@ urlpatterns = [
     url(r'^userdetail/(?P<pk>\d+)', UserDetailView.as_view(), name='user_detail'),
     url(r'^api/questions/listcreate/', QuestionListCreateAPIView.as_view(), name='api_question_list_create'),
     url(r'^api/question/(?P<pk>\d+)', QuestionRetrieveUpdateDestroyAPIView.as_view(), name='api_question_retrieve_update_destroy'),
-    url(r'^api/userlistcreate/', UserListCreateAPIView.as_view(), name='api_user_list_create')
+    url(r'^api/usercreate/', UserCreateAPIView.as_view(), name='api_user_create'),
+    url(r'^api_token_auth/', views.obtain_auth_token)
 ]

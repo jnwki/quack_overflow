@@ -1,5 +1,5 @@
 .direnv/
 .envrc
 duckapp/__pycache__/
-quack_overflow/__pycache__/
+quack_overflow/__pycache__
 duckapp/migrations/__pycache__/

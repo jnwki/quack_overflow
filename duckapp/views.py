@@ -4,7 +4,7 @@ from duckapp.models import UserProfile, Question, Answer
 from django.core.urlresolvers import reverse
 from django.contrib.auth.forms import UserCreationForm
 from django.http import HttpResponseRedirect
-from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, CreateAPIView
 from duckapp.serializers import QuestionSerializer, UserSerializer
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from duckapp.permissions import IsOwnerOrReadOnly
@@ -126,22 +126,30 @@ class UserDetailView(DetailView):
     model = UserProfile
 
 
+# this tests out ok
 class QuestionListCreateAPIView(ListCreateAPIView):
         serializer_class = QuestionSerializer
         queryset = Question.objects.all()
         permission_classes = (IsAuthenticatedOrReadOnly,)
 
+        def perform_create(self, serializer):
+            serializer.save(asker=self.request.user)
 
+
+# this tests out ok
 class QuestionRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     serializer_class = QuestionSerializer
     permission_classes = (IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly,)
     queryset = Question.objects.all()
 
 
-# should probably be just a createview. needs to attach a userprofile
-class UserListCreateAPIView(ListCreateAPIView):
+# tests out ok
+class UserCreateAPIView(CreateAPIView):
     serializer_class = UserSerializer
     queryset = User.objects.all()
+
+    def perform_create(self, serializer):
+        serializer.save()
 
 
 # don't think I need this view as userprofile (not user) would be what others would want to see
