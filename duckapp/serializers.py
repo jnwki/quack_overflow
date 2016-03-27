@@ -36,10 +36,3 @@ class UserSerializer(serializers.ModelSerializer):
         user.save()
         UserProfile.objects.create(user=user)
         return user
-
-
-
-
-
-
-        # g

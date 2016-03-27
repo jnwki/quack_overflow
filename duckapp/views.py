@@ -5,8 +5,8 @@ from django.core.urlresolvers import reverse
 from django.contrib.auth.forms import UserCreationForm
 from django.http import HttpResponseRedirect
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, CreateAPIView
-from duckapp.serializers import QuestionSerializer, UserSerializer
-from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
+from duckapp.serializers import QuestionSerializer, UserSerializer, AnswerSerializer
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from duckapp.permissions import IsOwnerOrReadOnly
 
 
@@ -29,6 +29,7 @@ class UserCreateView(CreateView):
         return reverse('login')
 
 
+# user needs to get 5 points for asking a question
 class QuestionCreateView(CreateView):
     model = Question
     fields = ['title', 'question_text', 'tags']
@@ -37,6 +38,9 @@ class QuestionCreateView(CreateView):
         new_question = form.save(commit=False)
         new_question.asker = self.request.user
         new_question.save()
+        profile = UserProfile.objects.get(user=self.request.user)
+        profile.score += 5
+        profile.save()
         return super().form_valid(form)
 
     def get_success_url(self):
@@ -126,7 +130,7 @@ class UserDetailView(DetailView):
     model = UserProfile
 
 
-# this tests out ok
+# when a user asks a question they need to get 5 points
 class QuestionListCreateAPIView(ListCreateAPIView):
         serializer_class = QuestionSerializer
         queryset = Question.objects.all()
@@ -134,6 +138,9 @@ class QuestionListCreateAPIView(ListCreateAPIView):
 
         def perform_create(self, serializer):
             serializer.save(asker=self.request.user)
+            profile = UserProfile.objects.get(user=self.request.user)
+            profile.score += 5
+            profile.save()
 
 
 # this tests out ok
@@ -152,8 +159,22 @@ class UserCreateAPIView(CreateAPIView):
         serializer.save()
 
 
+# this needs to be fixed... correct question needs to be retrieved from the pk and answer needs to be attached
+class AnswerCreateAPIView(ListCreateAPIView):
+    serializer_class = AnswerSerializer
+    # question = Question.objects.get(pk=pk)
+    # queryset = Answer.objects.filter(question=question)
+
+    def perform_create(self, serializer):
+        serializer.save()
 # don't think I need this view as userprofile (not user) would be what others would want to see
-class UserRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
-    serializer_class = UserSerializer
-    permission_classes = (IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly,)
-    queryset = User.objects.all()
+# class UserRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
+#     serializer_class = UserSerializer
+#     permission_classes = (IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly,)
+#     queryset = User.objects.all()
+
+
+# need to add answer functionality and upvote/downvote to api view,
+# create a message page for upvote/downvote errors
+# go back over requirements for elasticbeanstalk and deploy to the cloud
+# maybe try to pretty it up??
