@@ -34,6 +34,9 @@ class Answer(models.Model):
     title = models.CharField(max_length=255)
     timestamp = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        ordering = ["-score", "-timestamp"]
+
     def __str__(self):
         return "{}".format(self.title)
 
@@ -50,3 +53,10 @@ class UserProfile(models.Model):
 def create_auth_token(sender, instance=None, created=False, **kwargs):
     if created:
         Token.objects.create(user=instance)
+
+
+@receiver(post_save, sender=Question)
+def make_question_reward(sender, instance=None, created=False, **kwargs):
+    if created:
+        instance.asker.userprofile.score += 5
+        instance.asker.userprofile.save()

@@ -24,5 +24,5 @@ urlpatterns = [
         ),
     url(r'^api/usercreate/', UserCreateAPIView.as_view(), name='api_user_create'),
     url(r'^api_token_auth/', views.obtain_auth_token, name='get_token'),
-    url(r'^api/question/(?P<pk>\d+)/answer/', AnswerCreateAPIView, name='api_answer_create')
+    url(r'^api/answer/', AnswerCreateAPIView.as_view(), name='api_answer_create')
 ]
