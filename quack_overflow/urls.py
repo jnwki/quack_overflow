@@ -2,7 +2,7 @@ from django.conf.urls import url
 from django.contrib import admin
 from duckapp.views import IndexView, UserCreateView, QuestionCreateView, AnswerCreateView, UpvoteView, \
     DownvoteView, UserDetailView, QuestionListCreateAPIView, QuestionRetrieveUpdateDestroyAPIView, \
-    UserCreateAPIView, AnswerCreateAPIView
+    UserCreateAPIView, AnswerCreateAPIView, UserProfileRetrieveUpdateDestroyAPIView
 from django.contrib.auth import views as auth_views
 from rest_framework.authtoken import views
 
@@ -24,5 +24,6 @@ urlpatterns = [
         ),
     url(r'^api/usercreate/', UserCreateAPIView.as_view(), name='api_user_create'),
     url(r'^api_token_auth/', views.obtain_auth_token, name='get_token'),
-    url(r'^api/answer/', AnswerCreateAPIView.as_view(), name='api_answer_create')
+    url(r'^api/answer/', AnswerCreateAPIView.as_view(), name='api_answer_create'),
+    url(r'^api/userprofile/(?P<pk>\d+)', UserProfileRetrieveUpdateDestroyAPIView.as_view(), name='user_rud_api')
 ]

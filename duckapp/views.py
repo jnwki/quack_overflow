@@ -5,9 +5,9 @@ from django.core.urlresolvers import reverse
 from django.contrib.auth.forms import UserCreationForm
 from django.http import HttpResponseRedirect
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, CreateAPIView
-from duckapp.serializers import QuestionSerializer, UserSerializer, AnswerSerializer
+from duckapp.serializers import QuestionSerializer, UserSerializer, AnswerSerializer, UserProfileSerializer
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
-from duckapp.permissions import IsOwnerOrReadOnly
+from duckapp.permissions import IsOwnerOrReadOnlyQuestion, IsOwnerOrReadOnly
 
 
 class IndexView(ListView):
@@ -137,7 +137,7 @@ class QuestionListCreateAPIView(ListCreateAPIView):
 
 class QuestionRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     serializer_class = QuestionSerializer
-    permission_classes = (IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly,)
+    permission_classes = (IsAuthenticatedOrReadOnly, IsOwnerOrReadOnlyQuestion,)
     queryset = Question.objects.all()
 
 
@@ -152,15 +152,36 @@ class UserCreateAPIView(CreateAPIView):
 class AnswerCreateAPIView(ListCreateAPIView):
     serializer_class = AnswerSerializer
     queryset = Answer.objects.all()
+    permission_classes = (IsAuthenticatedOrReadOnly,)
 
     def create(self, request, *args, **kwargs):
         request.data['answerer'] = request.user.pk
         return super().create(request, *args, **kwargs)
-# don't think I need this view as userprofile (not user) would be what others would want to see
-# class UserRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
-#     serializer_class = UserSerializer
-#     permission_classes = (IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly,)
-#     queryset = User.objects.all()
+
+
+class UserProfileRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
+    serializer_class = UserProfileSerializer
+    permission_classes = (IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly,)
+    queryset = User.objects.all()
+
+# This does not work yet
+    def perform_update(self, serializer):
+        if serializer.data['upvotes']:
+            upvote = Answer.objects.get(pk=serializer.data['upvotes'])
+            self.request.user.userprofile.upvotes.add(upvote)
+            upvote.answerer.score += 10
+            upvote.answerer.save()
+            self.request.user.userprofile.save()
+
+        if serializer.data['downvotes']:
+            downvote = Answer.objects.get(serializer.data['downvotes'].pk)
+            downvote.answerer.score -= 5
+            self.request.user.userprofile.downvotes.add(downvote)
+            self.request.user.userprofile.score -= 1
+            downvote.answerer.save()
+            self.request.user.userprofile.save()
+
+
 
 
 # need to add upvote/downvote to api view,
