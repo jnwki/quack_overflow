@@ -3,3 +3,8 @@
 duckapp/__pycache__/
 quack_overflow/__pycache__
 duckapp/migrations/__pycache__/
+
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml
