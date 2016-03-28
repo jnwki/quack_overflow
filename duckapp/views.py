@@ -161,13 +161,15 @@ class AnswerCreateAPIView(ListCreateAPIView):
 
 class UserProfileRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     serializer_class = UserProfileSerializer
-    permission_classes = (IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly,)
-    queryset = User.objects.all()
+    # permission_classes = (IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly,)
+    queryset = UserProfile.objects.all()
 
 # This does not work yet
     def perform_update(self, serializer):
+
         if serializer.data['upvotes']:
             upvote = Answer.objects.get(pk=serializer.data['upvotes'])
+            print(upvote + "AAAAAAAAAAAAAAAAAAAA")
             self.request.user.userprofile.upvotes.add(upvote)
             upvote.answerer.score += 10
             upvote.answerer.save()
@@ -184,7 +186,4 @@ class UserProfileRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
 
 
 
-# need to add upvote/downvote to api view,
-# create a message page for upvote/downvote errors
-# go back over requirements for elasticbeanstalk and deploy to the cloud
-# maybe try to pretty it up
+#
