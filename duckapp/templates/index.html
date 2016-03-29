@@ -1,13 +1,24 @@
 {% extends 'base.html' %}
 {% block content %}
 <div class="container">
+    <div class="col s6 m6 l6">
+        Welcome to Quack Overflow. Feel free to ask questions for users to
+        answer. Or answer them yourself. <br><br>
 
+    </div>
     {% for question in object_list %}
 
         <div class="panel panel-default">
             <div class="panel-heading">
                 <b>
-                    {{ question.title }} -- asked by <a href="{% url 'user_detail' question.asker.userprofile.pk %}">{{ question.asker }}</a>
+                    {{ question.title }} -- asked by
+                    <a href="{% url 'user_detail' question.asker.userprofile.pk %}">
+                        <button type="button" class="btn btn-default btn-sm">
+                            <span class="glyphicon glyphicon-user">
+                                {{ question.asker }}
+                            </span>
+                        </button>
+                    </a>
                 </b>
             </div>
 
@@ -15,28 +26,57 @@
 
             Tags:
             {% for tag in question.tags.all %}
-                <b>{{ tag }}</b>
+                <button type="button" class="btn btn-default btn-xs">
+                    <span class="glyphicon glyphicon-paperclip" aria-hidden="true"><b>{{ tag }}</b></span>
+                </button>
             {% endfor %}
             <br>
         {% if not question.answer_set.all %}
-            <a href="{% url 'answer_create' question.pk %}">Be The First To Answer This Question</a>
+            <br>
+            <a href="{% url 'answer_create' question.pk %}">
+                <button type="button" class="btn btn-default" aria-label="Left Align">
+                    Be The First To Answer This Question
+                </button>
+            </a>
         {% else %}
-            <a href="{% url 'answer_create' question.pk %}">Answer This Question</a>
+            <br>
+            <a href="{% url 'answer_create' question.pk %}">
+                <button type="button" class="btn btn-default" aria-label="Left Align">
+                    Answer This Question
+                </button>
+            </a>
         {% endif %}
-        <br>
     <!--answer block-->
-        <h3>Answers</h3>
-        <ul>
+        {% if question.answer_set.all %}
+        <br><br>
+            <h4>Answers:</h4>
+        {% endif %}
         {% for answer in question.answer_set.all %}
             <br>
-                <li><b>{{ answer.title }}</b> -- Answered by {{ answer.answerer }}</li>
+                <span class="glyphicon glyphicon-star" aria-hidden="true"></span><b> {{ answer.title }}</b>
+                -- Answered by <a href="{% url 'user_detail' answer.answerer.userprofile.pk %}">
+                    <button type="button" class="btn btn-default btn-xs">
+                        <span class="glyphicon glyphicon-user">
+                            {{ answer.answerer }}
+                        </span>
+                    </button>
+                </a>
+            <br>
+            {{ answer.answer_text }}
+            <br>
+            Answer Rating: <b>{{ answer.score }}</b>
 
-            <li>{{ answer.answer_text }}</li>
-            Answer Rating: {{ answer.score }}
-            <a href="{% url 'upvote' answer.pk %}">Upvote</a>
-            <a href="{% url 'downvote' answer.pk %}">Downvote</a>
+            <a href="{% url 'upvote' answer.pk %}">
+                <button type="button" class="btn btn-default btn-xs">
+                Upvote
+                </button>
+            </a>
+            <a href="{% url 'downvote' answer.pk %}">
+                <button type="button" class="btn btn-default btn-xs">
+                    Downvote
+                </button>
+            </a>
         {% endfor %}
-        </ul>
         <br><br>
         </div>
     {% endfor %}
