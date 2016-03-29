@@ -21,63 +21,64 @@
                     </a>
                 </b>
             </div>
+            <div class="panel panel-body">
+                <p>{{ question.question_text}}</p>
 
-            <p>{{ question.question_text}}</p>
-
-            Tags:
-            {% for tag in question.tags.all %}
-                <button type="button" class="btn btn-default btn-xs">
-                    <span class="glyphicon glyphicon-paperclip" aria-hidden="true"><b>{{ tag }}</b></span>
-                </button>
-            {% endfor %}
-            <br>
-        {% if not question.answer_set.all %}
-            <br>
-            <a href="{% url 'answer_create' question.pk %}">
-                <button type="button" class="btn btn-default" aria-label="Left Align">
-                    Be The First To Answer This Question
-                </button>
-            </a>
-        {% else %}
-            <br>
-            <a href="{% url 'answer_create' question.pk %}">
-                <button type="button" class="btn btn-default" aria-label="Left Align">
-                    Answer This Question
-                </button>
-            </a>
-        {% endif %}
-    <!--answer block-->
-        {% if question.answer_set.all %}
-        <br><br>
-            <h4>Answers:</h4>
-        {% endif %}
-        {% for answer in question.answer_set.all %}
-            <br>
-                <span class="glyphicon glyphicon-star" aria-hidden="true"></span><b> {{ answer.title }}</b>
-                -- Answered by <a href="{% url 'user_detail' answer.answerer.userprofile.pk %}">
+                Tags:
+                {% for tag in question.tags.all %}
                     <button type="button" class="btn btn-default btn-xs">
-                        <span class="glyphicon glyphicon-user">
-                            {{ answer.answerer }}
-                        </span>
+                        <span class="glyphicon glyphicon-paperclip" aria-hidden="true"><b>{{ tag }}</b></span>
                     </button>
-                </a>
-            <br>
-            {{ answer.answer_text }}
-            <br>
-            Answer Rating: <b>{{ answer.score }}</b>
+                {% endfor %}
+                <br>
+                {% if not question.answer_set.all %}
+                <br>
+                    <a href="{% url 'answer_create' question.pk %}">
+                        <button type="button" class="btn btn-primary btn-sm" aria-label="Left Align">
+                            Be The First To Answer This Question
+                        </button>
+                    </a>
+                {% else %}
+                <br>
+                    <a href="{% url 'answer_create' question.pk %}">
+                        <button type="button" class="btn btn-primary btn-sm" aria-label="Left Align">
+                            Answer This Question
+                        </button>
+                    </a>
+                {% endif %}
+        <!--answer block-->
+                {% if question.answer_set.all %}
+                    <br><br>
+                    <h4>Answers:</h4>
+                    {% for answer in question.answer_set.all %}
+                        <br>
+                            <span class="glyphicon glyphicon-star" aria-hidden="true"></span><b> {{ answer.title }}</b>
+                            -- Answered by <a href="{% url 'user_detail' answer.answerer.userprofile.pk %}">
+                                <button type="button" class="btn btn-default btn-xs">
+                                    <span class="glyphicon glyphicon-user">
+                                        {{ answer.answerer }}
+                                    </span>
+                                </button>
+                            </a>
+                        <br>
+                        {{ answer.answer_text }}
+                        <br>
+                        Answer Rating: <b>{{ answer.score }}</b>
 
-            <a href="{% url 'upvote' answer.pk %}">
-                <button type="button" class="btn btn-default btn-xs">
-                Upvote
-                </button>
-            </a>
-            <a href="{% url 'downvote' answer.pk %}">
-                <button type="button" class="btn btn-default btn-xs">
-                    Downvote
-                </button>
-            </a>
-        {% endfor %}
-        <br><br>
+                        <a href="{% url 'upvote' answer.pk %}">
+                            <button type="button" class="btn btn-success btn-xs">
+                                Upvote
+                            </button>
+                        </a>
+                        <a href="{% url 'downvote' answer.pk %}">
+                            <button type="button" class="btn btn-warning btn-xs">
+                                Downvote
+                            </button>
+                        </a>
+                        <br>
+                    {% endfor %}
+                {% endif %}
+            </div>
         </div>
     {% endfor %}
 </div>

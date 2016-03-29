@@ -51,6 +51,11 @@ class AnswerCreateView(CreateView):
     model = Answer
     fields = ['title', 'answer_text']
 
+    def get_context_data(self, **kwargs):
+        context = super(AnswerCreateView, self).get_context_data(**kwargs)
+        context['related_question'] = Question.objects.get(pk=self.kwargs['pk'])
+        return context
+
     def form_valid(self, form, **kwargs):
         answer_form = form.save(commit=False)
         answer_form.question = Question.objects.get(pk=self.kwargs['pk'])
