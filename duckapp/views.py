@@ -5,9 +5,13 @@ from django.core.urlresolvers import reverse
 from django.contrib.auth.forms import UserCreationForm
 from django.http import HttpResponseRedirect
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, CreateAPIView
-from duckapp.serializers import QuestionSerializer, UserSerializer, AnswerSerializer, UserProfileSerializer
+from rest_framework.views import APIView
+from duckapp.serializers import QuestionSerializer, UserSerializer, AnswerSerializer
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from duckapp.permissions import IsOwnerOrReadOnlyQuestion, IsOwnerOrReadOnly
+from rest_framework.response import Response
+from rest_framework import status
+# from django.http import Http404
 
 
 class IndexView(ListView):
@@ -159,31 +163,61 @@ class AnswerCreateAPIView(ListCreateAPIView):
         return super().create(request, *args, **kwargs)
 
 
-class UserProfileRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
-    serializer_class = UserProfileSerializer
-    # permission_classes = (IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly,)
-    queryset = UserProfile.objects.all()
+class UpvoteAPIView(APIView):
+    permission_classes = (IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly)
 
-# This does not work yet
-    def perform_update(self, serializer):
+    def post(self, request, **kwargs):
+        answer = Answer.objects.get(pk=self.kwargs['pk'])
+        upvoter = UserProfile.objects.get(user=self.request.user)
 
-        if serializer.data['upvotes']:
-            upvote = Answer.objects.get(pk=serializer.data['upvotes'])
-            print(upvote + "AAAAAAAAAAAAAAAAAAAA")
-            self.request.user.userprofile.upvotes.add(upvote)
-            upvote.answerer.score += 10
-            upvote.answerer.save()
-            self.request.user.userprofile.save()
+        if answer in upvoter.upvotes.all():
+            print("user has already upvoted that answer")
+            return Response(status=None)
+        elif answer in upvoter.downvotes.all():
+            print("user has already downvoted that answer")
+            return Response(status=None)
+        elif answer.answerer == self.request.user:
+            print("You cannot vote on your own posts")
+            return Response(status=None)
+        else:
+            upvoter.upvotes.add(answer)
+            upvoter.save()
 
-        if serializer.data['downvotes']:
-            downvote = Answer.objects.get(serializer.data['downvotes'].pk)
-            downvote.answerer.score -= 5
-            self.request.user.userprofile.downvotes.add(downvote)
-            self.request.user.userprofile.score -= 1
-            downvote.answerer.save()
-            self.request.user.userprofile.save()
+            question_answerer = UserProfile.objects.get(user=answer.answerer)
+            question_answerer.score += 10
+            question_answerer.save()
+
+            answer.score += 1
+            answer.save()
+
+            return Response(status=status.HTTP_201_CREATED)
 
 
+class DownvoteAPIView(APIView):
+    permission_classes = (IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly)
 
+    def post(self, request, **kwargs):
+        answer = Answer.objects.get(pk=self.kwargs['pk'])
+        downvoter = UserProfile.objects.get(user=self.request.user)
 
-#
+        if answer in downvoter.downvotes.all():
+            print("user has already downvoted that answer")
+            return Response(status=None)
+        elif answer in downvoter.upvotes.all():
+            print("user has already upvoted that answer")
+            return Response(status=None)
+        elif answer.answerer == self.request.user:
+            print("You cannot vote on your own posts")
+            return Response(status=None)
+        else:
+            downvoter.downvotes.add(answer)
+            downvoter.score -= 1
+            downvoter.save()
+
+            question_answerer = UserProfile.objects.get(user=answer.answerer)
+            question_answerer.score -= 5
+            question_answerer.save()
+
+            answer.score -= 1
+            answer.save()
+            return Response(status=status.HTTP_201_CREATED)

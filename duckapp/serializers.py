@@ -25,6 +25,7 @@ class TagSerializer(serializers.ModelSerializer):
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserProfile
+        # fields = ['upvotes', 'downvotes']
 
 
 class UserSerializer(serializers.ModelSerializer):
